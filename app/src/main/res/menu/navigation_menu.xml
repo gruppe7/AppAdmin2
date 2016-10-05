@@ -2,13 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/nav_account"
-        android:title="My Account" />
+        android:icon="@mipmap/ic_person_black_24dp"
+        android:title="Min Konto" />
 
     <item android:id="@+id/nav_account"
+        android:icon="@mipmap/ic_credit_card_black_24dp"
         android:title="Registrer Kort"/>
 
     <item android:id="@+id/nav_account"
+        android:icon="@mipmap/ic_event_black_24dp"
         android:title="Aktive Eventer"/>
+
     <item android:id="@+id/nav_account"
+        android:icon="@mipmap/ic_power_settings_new_black_24dp"
         android:title="Log Out"/>
 </menu>
