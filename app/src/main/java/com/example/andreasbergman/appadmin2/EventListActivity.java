@@ -8,8 +8,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -24,7 +27,8 @@ public class EventListActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
     private ListView eventlist;
-    private String[] events;
+    private String[] events;//test list
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -50,13 +54,29 @@ public class EventListActivity extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        //making the list
         Resources resources = getResources();
-       events = resources.getStringArray(R.array.event); //test list
+        events = resources.getStringArray(R.array.event); //test list
         eventlist = (ListView)findViewById(listview1);  // Get ListView object from xml
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, events); // Define a new Adapter
         eventlist.setAdapter(adapter);     // Assign adapter to ListView
-    }
+        eventlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)  {
+                int itemPosition     = position;
+                String  itemValue    = (String) eventlist.getItemAtPosition(position);
 
+                //method to send the selected event
+
+                Toast.makeText(getApplicationContext(), "Position :"+itemPosition+"  ListItem : " +itemValue , Toast.LENGTH_LONG).show(); //test
+
+            }
+        });
+
+}
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mToggle.onOptionsItemSelected(item)) {
@@ -100,4 +120,6 @@ public class EventListActivity extends AppCompatActivity {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+
 }
