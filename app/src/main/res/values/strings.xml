@@ -15,5 +15,11 @@
     </string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string-array name="event">
+        <item>12.10.2016 Bedriftpresentasjon</item>
+        <item>10.10.2016 Bedriftpresentasjon</item>
+        <item>10.01.2017 Nyttårsball</item>
+        <item>10.02.2017 Åretur</item>
+    </string-array>
 
 </resources>
