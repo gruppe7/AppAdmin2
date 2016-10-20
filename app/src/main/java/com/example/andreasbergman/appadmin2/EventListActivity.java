@@ -1,5 +1,6 @@
 package com.example.andreasbergman.appadmin2;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -70,8 +70,11 @@ public class EventListActivity extends AppCompatActivity {
                 String  itemValue    = (String) eventlist.getItemAtPosition(position);
 
                 //method to send the selected event
+                Intent intent = new Intent(EventListActivity.this, EventActivity.class);
+                startActivity(intent);
+                finish();
 
-                Toast.makeText(getApplicationContext(), "Position :"+itemPosition+"  ListItem : " +itemValue , Toast.LENGTH_LONG).show(); //test
+                //Toast.makeText(getApplicationContext(), "Position :"+itemPosition+"  ListItem : " +itemValue , Toast.LENGTH_LONG).show(); //test
 
             }
         });
