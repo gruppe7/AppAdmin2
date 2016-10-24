@@ -1,6 +1,7 @@
 package com.example.andreasbergman.appadmin2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -13,8 +14,23 @@ public class Event implements Serializable {
     private String description;
     private int participants;
     private int dinnerParticipants;
-    private int eventId;
+    private static int eventId = 0;
     private Date date;
+
+    private ArrayList<Participants> attendingParticipants;
+
+    public Event (){
+        attendingParticipants = new ArrayList<Participants>();
+    }
+
+    public Event(String name, String description, int participants, Date date, int dinnerParticipants) {
+        eventId++;
+        this.name = name;
+        this.description = description;
+        this.participants = participants;
+        this.date = date;
+        this.dinnerParticipants = dinnerParticipants;
+    }
 
     public String getName() {
         return name;

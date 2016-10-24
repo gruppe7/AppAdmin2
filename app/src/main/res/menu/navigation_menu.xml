@@ -5,15 +5,15 @@
         android:icon="@mipmap/ic_person_black_24dp"
         android:title="Min Konto" />
 
-    <item android:id="@+id/nav_account"
+    <item android:id="@+id/registration_id"
         android:icon="@mipmap/ic_credit_card_black_24dp"
         android:title="Registrer Kort"/>
 
-    <item android:id="@+id/nav_account"
+    <item android:id="@+id/eventlist_id"
         android:icon="@mipmap/ic_event_black_24dp"
         android:title="Aktive Eventer"/>
 
-    <item android:id="@+id/nav_account"
+    <item android:id="@+id/logout_id"
         android:icon="@mipmap/ic_power_settings_new_black_24dp"
         android:title="Log Out"/>
 </menu>
