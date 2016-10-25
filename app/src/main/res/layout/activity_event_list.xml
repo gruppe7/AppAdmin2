@@ -10,7 +10,8 @@
     <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
 
         <include layout="@layout/navigation_action" android:layout_width="match_parent" android:layout_height="wrap_content" />
@@ -23,18 +24,14 @@
             android:textAlignment="center"
             android:layout_gravity="center"
             android:textSize="24dp"/>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/main_container">
-
-        </FrameLayout>
-
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="238dp"
             android:id="@+id/listview1" />
+
+
+
+
 
 
     </LinearLayout>
