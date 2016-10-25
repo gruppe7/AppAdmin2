@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 public class CardRegistrationActivity extends AppCompatActivity {
 
+    private String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

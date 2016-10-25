@@ -94,6 +94,7 @@ public class EventListActivity extends AppCompatActivity {
             }
         });
 
+        //@andreasbergman
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
