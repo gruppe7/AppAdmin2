@@ -1,7 +1,10 @@
 package com.example.andreasbergman.appadmin2;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 
 public class EventActivity extends AppCompatActivity {
 
@@ -9,5 +12,16 @@ public class EventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+        TextView back = (TextView)findViewById(R.id.backLinkTV);//temporarily for testing
+        back.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EventActivity.this, EventListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }
