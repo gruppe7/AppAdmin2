@@ -42,6 +42,12 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
+
+    //1. Sende POST til DB
+    //2. Sende brukernavn og passord
+    //3.
+
+
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -64,6 +70,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -313,6 +321,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
+
+                    //Sjekker passord og brukernavn
+
                     return pieces[1].equals(mPassword);
                 }
             }

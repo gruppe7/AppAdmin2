@@ -15,7 +15,7 @@ public class Event implements Serializable {
     private int participants;
     private int dinnerParticipants;
     private static int eventId = 0;
-    private Date date;
+    private String date;
 
     private ArrayList<Participants> attendingParticipants;
 
@@ -23,7 +23,7 @@ public class Event implements Serializable {
         attendingParticipants = new ArrayList<Participants>();
     }
 
-    public Event(String name, String description, int participants, Date date, int dinnerParticipants) {
+    public Event(String name, String description, int participants, String date, int dinnerParticipants) {
         eventId++;
         this.name = name;
         this.description = description;
@@ -72,11 +72,11 @@ public class Event implements Serializable {
         this.eventId = eventId;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

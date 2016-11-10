@@ -23,6 +23,10 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import static com.example.andreasbergman.appadmin2.R.id.listview1;
@@ -35,6 +39,7 @@ public class EventListActivity extends AppCompatActivity {
     private ListView eventlist;
     private String[] events;//test list
     NavigationView navigationView;
+    HttpConnect httpConnect;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -48,11 +53,25 @@ public class EventListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
+        httpConnect = new HttpConnect();
+        String urlEvents = "http://10.22.171.223:8443/events/2016h";
+
         events1 = new ArrayList<Event>();
 
-        //Hardkodet inn eventer
-        events1.add(new Event("DnB", "Bedpress", 100, new Date(2016,11,25),80));
-        events1.add(new Event("SEB", "Bedpress", 500, new Date(2016,11,26),80));
+        JSONArray pArray = null;
+        try {
+            pArray = new JSONArray(httpConnect.runRequest(urlEvents));
+
+            for(int i = 0; i < pArray.length(); i++){
+                JSONObject e = null;
+
+                e = pArray.getJSONObject(i);
+                events1.add(new Event(e.getString("name"),e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
 
