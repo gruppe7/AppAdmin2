@@ -54,14 +54,16 @@ public class EventListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_list);
 
         httpConnect = new HttpConnect();
-        String urlEvents = "http://10.22.171.223:8443/events/2016h";
+        String urlEvents = "http://10.22.160.172:8443/events";
 
         events1 = new ArrayList<Event>();
 
-        JSONArray pArray = null;
         try {
-            pArray = new JSONArray(httpConnect.runRequest(urlEvents));
+            String con = httpConnect.runRequest(urlEvents);
 
+            JSONArray pArray = new JSONArray();
+
+            int x = 0;
             for(int i = 0; i < pArray.length(); i++){
                 JSONObject e = null;
 

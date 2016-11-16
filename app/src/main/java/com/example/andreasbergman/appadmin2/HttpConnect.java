@@ -27,6 +27,7 @@ public class HttpConnect {
 
     public String runRequest(String url){
        new JSONTask().execute(url);
+        int i = 0;
         return result;
     }
 
@@ -37,7 +38,7 @@ public class HttpConnect {
         protected String doInBackground(String... urls) {
             HttpURLConnection connection = null;
             BufferedReader bufferedReader = null;
-
+            String finalJSON = "";
             try{
                 URL url = new URL(urls[0]);
                 connection = (HttpURLConnection) url.openConnection();
@@ -54,22 +55,16 @@ public class HttpConnect {
 
                 }
                 String finalJSONString = buffer.toString();
-
+                finalJSON = finalJSONString;
                 JSONArray pArray = new JSONArray(finalJSONString);
 
-                String svar = "";
-
-                for (int i = 0; i < pArray.length(); i++){
-                    JSONObject e = pArray.getJSONObject(i);
-
-                    svar += "ID: " + e.getInt("lockerId") + " ";
-
-                }
 
                 return finalJSONString;
+
             }catch (MalformedURLException e){
 
             }catch (IOException e){
+                e.printStackTrace();
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -87,13 +82,14 @@ public class HttpConnect {
                 }
 
             }
-            return null;
+                return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
              result = s;
+            int i = 0;
         }
     }
 }
