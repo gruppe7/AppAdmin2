@@ -1,22 +1,23 @@
 package com.example.andreasbergman.appadmin2;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -28,8 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
-import static com.example.andreasbergman.appadmin2.R.id.listview1;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -48,13 +47,32 @@ public class EventListActivity extends AppCompatActivity {
 
     private ArrayList<Event> events1;
 
+//Elisabeth tester
+    public class EventAdapter extends ArrayAdapter<Event>{
+        public EventAdapter(Context context, ArrayList<Event> events){
+            super(context, 0, events);
+        }
+        @Override
+        public View getView(int position, View conertView, ViewGroup parent){
+            Event event = getItem(position);
+            if(conertView == null){
+                conertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_event_list, parent, false);
+            }
+            //ListView e = (ListView)conertView.findViewById(R.id.listview1);
+            //e.setTextAlignment(event.name);
+            TextView test = (TextView)conertView.findViewById(R.id.textView);
+            test.setText(event.getName());
+            return conertView;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
         httpConnect = new HttpConnect();
-        String urlEvents = "http://10.22.160.172:8443/events";
+        String urlEvents = "http://10.22.168.78:8443/events";
 
         events1 = new ArrayList<Event>();
 
@@ -93,14 +111,19 @@ public class EventListActivity extends AppCompatActivity {
 
         //making the list
         Resources resources = getResources();
-        events = resources.getStringArray(R.array.event); //test list
-        eventlist = (ListView)findViewById(listview1);  // Get ListView object from xml
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, events); // Define a new Adapter
-        eventlist.setAdapter(adapter);     // Assign adapter to ListView
-        eventlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            
-            @Override
+       // events = resources.getStringArray(R.array.event); //test list
+       // eventlist = (ListView)findViewById(listview1);  // Get ListView object from xml
+
+       // ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, events); // Define a new Adapter
+        //eventlist.setAdapter(adapter);     // Assign adapter to ListView
+        //eventlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            ArrayList<Event> arrayOfEvents = new ArrayList<Event>();
+            EventAdapter adapter1 = new EventAdapter(this, arrayOfEvents);
+            ListView listView =(ListView)findViewById(R.id.listview1);
+            listView.setAdapter(adapter1);
+
+        /*    @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)  {
                 int itemPosition     = position;
                 String  itemValue    = (String) eventlist.getItemAtPosition(position);
@@ -113,7 +136,7 @@ public class EventListActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Position :"+itemPosition+"  ListItem : " +itemValue , Toast.LENGTH_LONG).show(); //test
 
             }
-        });
+        });*/
 
         //@andreasbergman
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
