@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -28,9 +29,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
-public class EventListActivity extends AppCompatActivity {
+public class EventListActivity extends AppCompatActivity{
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
@@ -44,10 +52,10 @@ public class EventListActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private HTTPHandler HttpHandler;
 
-    private ArrayList<Event> events1;
 
-//Elisabeth tester
+    //Elisabeth tester
     public class EventAdapter extends ArrayAdapter<Event>{
         public EventAdapter(Context context, ArrayList<Event> events){
             super(context, 0, events);
@@ -71,10 +79,11 @@ public class EventListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
-        httpConnect = new HttpConnect();
         String urlEvents = "http://10.22.168.78:8443/events";
 
-        events1 = new ArrayList<Event>();
+
+        /*
+        httpConnect = new HttpConnect();
 
         try {
             String con = httpConnect.runRequest(urlEvents);
@@ -93,7 +102,7 @@ public class EventListActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
+        */
 
         mToolbar = (Toolbar) findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
@@ -161,6 +170,7 @@ public class EventListActivity extends AppCompatActivity {
         });
 
 }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mToggle.onOptionsItemSelected(item)) {
@@ -205,5 +215,41 @@ public class EventListActivity extends AppCompatActivity {
         client.disconnect();
     }
 
+    public class JSONTask extends AsyncTask<String, String, String> {
 
+        public AsyncResponse delegate = null;
+
+        public JSONTask(AsyncResponse delegate){
+            this.delegate = delegate;
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            HttpURLConnection connection = null;
+            BufferedReader bufferedReader = null;
+            String finalJSON = "";
+            try{
+                JSONObject jsonObject = HttpHandler.GET(urls[0]);
+
+                return jsonObject.toString();
+
+            } finally {
+                if(connection != null){
+                    connection.disconnect();
+                }
+
+                try {
+                    if (bufferedReader != null){
+                        bufferedReader.close();
+                    }
+                } catch (IOException e) {
+                }
+            }
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            int i = 0;
+        }
+    }
 }

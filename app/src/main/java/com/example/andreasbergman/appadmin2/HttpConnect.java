@@ -31,9 +31,7 @@ public class HttpConnect {
         return result;
     }
 
-
     public class JSONTask extends AsyncTask<String, String, String> {
-
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection connection = null;
@@ -78,18 +76,13 @@ public class HttpConnect {
                         bufferedReader.close();
                     }
                 } catch (IOException e) {
-
                 }
-
             }
                 return null;
         }
-
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-             result = s;
-            int i = 0;
         }
     }
 }
