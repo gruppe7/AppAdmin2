@@ -37,22 +37,44 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
-public class EventListActivity extends AppCompatActivity{
+public class EventListActivity extends AppCompatActivity implements AsyncResponse{
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
     private ListView eventlist;
-    private String[] events;//test list
+    private Event[] events;//test list
     NavigationView navigationView;
-    HttpConnect httpConnect;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
     private HTTPHandler HttpHandler;
+    private JSONObject allEvents;
+    ArrayList<Event> arrayOfEvents;
+
+    @Override
+    public void processFinish(JSONObject output) throws JSONException {
+        arrayOfEvents = new ArrayList<Event>();
+
+
+        try {
+            JSONArray pArray = new JSONArray(allEvents);
+
+            int x = 0;
+            for(int i = 0; i < pArray.length(); i++){
+                JSONObject e = null;
+                e = pArray.getJSONObject(i);
+                arrayOfEvents.add(new Event(e.getString("name"),e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
     //Elisabeth tester
@@ -79,30 +101,25 @@ public class EventListActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
-        String urlEvents = "http://10.22.168.78:8443/events";
+        String urlEvents = "http://192.168.1.9:8443/events";
+        HttpHandler = new HTTPHandler("GET", urlEvents,null);
+       // ArrayList<Event> arrayOfEvents = new ArrayList<Event>();
 
-
-        /*
-        httpConnect = new HttpConnect();
 
         try {
-            String con = httpConnect.runRequest(urlEvents);
+            allEvents = HttpHandler.execute().get();
+            //JSONArray pArray = new JSONArray(allEvents);
 
-            JSONArray pArray = new JSONArray();
-
-            int x = 0;
-            for(int i = 0; i < pArray.length(); i++){
-                JSONObject e = null;
-
-                e = pArray.getJSONObject(i);
-                events1.add(new Event(e.getString("name"),e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
-            }
-
-        } catch (JSONException e) {
+            //for(int i = 0; i < pArray.length(); i++){
+            //    JSONObject e = null;
+            //    e = pArray.getJSONObject(i);
+            //    arrayOfEvents.add(new Event(e.getString("name"),e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
+            //}
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-        */
 
         mToolbar = (Toolbar) findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
@@ -127,10 +144,9 @@ public class EventListActivity extends AppCompatActivity{
        // ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, events); // Define a new Adapter
         //eventlist.setAdapter(adapter);     // Assign adapter to ListView
         //eventlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            ArrayList<Event> arrayOfEvents = new ArrayList<Event>();
-            EventAdapter adapter1 = new EventAdapter(this, arrayOfEvents);
-            ListView listView =(ListView)findViewById(R.id.listview1);
-            listView.setAdapter(adapter1);
+            //EventAdapter adapter1 = new EventAdapter(this, arrayOfEvents);
+            //ListView listView =(ListView)findViewById(R.id.listview1);
+            //listView.setAdapter(adapter1);
 
         /*    @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)  {

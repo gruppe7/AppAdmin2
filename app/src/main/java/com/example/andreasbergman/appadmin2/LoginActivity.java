@@ -3,6 +3,7 @@ package com.example.andreasbergman.appadmin2;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -51,7 +52,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     //1. Sende POST til DB
     //2. Sende brukernavn og passord
-    //3.
 
 
     /**
@@ -82,9 +82,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String URL;
     private JSONObject jsonObjectLogin;
     String token;
-    int employee;
-    int eventmanager;
+    boolean employee;
+    boolean eventmanager;
     JSONObject result;
+    HTTPToken mToken;
 
 
 
@@ -92,11 +93,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+         //mToken = ((HTTPToken) getApplicationContext());
+
         jsonObjectLogin = new JSONObject();
-
-        URL = "http://10.22.160.172:8443/users";
-
-
+        URL = "http://192.168.1.9:8443/users";
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -200,11 +201,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
+        //Creating JSON file for HTTP Request
+        jsonObjectLogin.put("username",email);
+        jsonObjectLogin.put("password",password);
 
         if (mAuthTask != null) {
             return;
         }
-
 
         boolean cancel = false;
         View focusView = null;
@@ -231,19 +234,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            jsonObjectLogin.put("username",email);
-            jsonObjectLogin.put("password",password);
+
             httpHandler = new HTTPHandler("POST",URL, jsonObjectLogin);
             httpHandler.delegate = this;
 
-            verifyLogin();
-            //mAuthTask = new UserLoginTask(email, password);
-            //mAuthTask.execute((Void) null);
+            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask.execute((Void) null);
         }
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -357,35 +357,37 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+            JSONObject svar = httpHandler.postRequest(URL,jsonObjectLogin);
 
+            int responsecode = 0;
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+                responsecode = svar.getInt("responseCode");
 
-            try {
-                jsonObjectLogin = new JSONObject();
-                jsonObjectLogin.put("username", "gunnadal");
-                jsonObjectLogin.put("password", "abc123");
+                if(responsecode == 200 || responsecode == 201){
 
+                    token = svar.getString("token");
+
+                    //Setter som global variabel
+                    //mToken.setToken(token);
+
+                    if(svar.getInt("employee") == 1){
+                        employee = true;
+                    }else employee = false;
+                    if (svar.getInt("eventmanager") == 1){
+                        eventmanager = true;
+                    }else eventmanager = false;
+
+                    return true;
+
+                }else{
+                    return false;
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-
-                    //Sjekker passord og brukernavn
-
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
             // TODO: register the new account here.
-            return false; //Changed
+
+            return false;
         }
 
         @Override
@@ -394,15 +396,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                try {
-                    verifyLogin();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
                 finish();
                 Intent myIntent = new Intent(LoginActivity.this, EventListActivity.class);
                 LoginActivity.this.startActivity(myIntent);
@@ -419,24 +412,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    public void verifyLogin() throws ExecutionException, InterruptedException, JSONException {
+    public boolean verifyLogin() throws ExecutionException, InterruptedException, JSONException {
+
         result = httpHandler.execute().get();
+
         int responsecode = result.getInt("responseCode");
 
-       if(responsecode == 200 || responsecode == 201){
+        if(responsecode == 200 || responsecode == 201){
 
-            token = result.getString("token");
-            employee = result.getInt("employee");
-            eventmanager = result.getInt("eventmanager");
+           token = result.getString("token");
 
-           Intent myIntent = new Intent(LoginActivity.this, EventListActivity.class);
-           LoginActivity.this.startActivity(myIntent);
+           //Setter som global variabel
+           //mToken.setToken(token);
+
+           if(result.getInt("employee") == 1){
+               employee = true;
+           }else employee = false;
+           if (result.getInt("eventmanager") == 1){
+               eventmanager = true;
+           }else eventmanager = false;
+
+            return true;
 
         }else{
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            mPasswordView.requestFocus();        }
-        int i = 0;
-
+           return false;
+       }
     }
 
     @Override

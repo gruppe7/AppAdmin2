@@ -23,21 +23,30 @@ import java.net.URL;
  */
 
 public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
-    HttpURLConnection conn;
-    DataOutputStream wr;
-    StringBuilder result;
-    URL urlObj;
-    String url;
-    JSONObject jObj = null;
-    JSONObject inputObj;
-    String request;
+    private HttpURLConnection conn;
+    private DataOutputStream wr;
+    private StringBuilder result;
+    private URL urlObj;
+    private String url;
+    private JSONObject jObj = null;
+    private JSONObject inputObj;
+    private String request;
+    private String token;
+    HTTPToken mToken;
 
     public AsyncResponse delegate = null;
+
+    public HTTPHandler(){
+
+    }
+
 
     public HTTPHandler(String rq, String url, JSONObject jsonObj){
         this.request = rq;
         this.inputObj = jsonObj;
         this.url = url;
+
+
     }
 
     @Override
@@ -108,7 +117,10 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
 
                 }
                 String finalJSONString = buffer.toString();
-                JSONObject jObj = new JSONObject(finalJSONString);
+
+                JSONArray array = new JSONArray(buffer.toString());
+                JSONObject temp = array.getJSONObject(0);
+                jObj = temp;
 
                 return jObj;
             } catch (IOException e) {
@@ -187,14 +199,12 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
 
             conn.connect();
 
-            //JSONObject jsonObject = new JSONObject();
-            //jsonObject.put("username", "gunnadal");
-            //jsonObject.put("password", "abc123");
-
             wr = new DataOutputStream(conn.getOutputStream());
             wr.writeBytes(jsonObject.toString());
             wr.flush();
             wr.close();
+
+            int res = conn.getResponseCode();
 
             InputStream in = new BufferedInputStream(conn.getInputStream());
             //Receive the response from the server
@@ -204,14 +214,12 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
             while ((line = reader.readLine()) != null) {
                 result.append(line);
             }
-
             try {
                 jObj = new JSONObject(result.toString());
+                jObj.put("responseCode", res);
             } catch (JSONException e) {
                 Log.e("JSON Parser", "Error parsing data " + e.toString());
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -295,5 +303,21 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
         conn.disconnect();
 
         return jObj;
+    }
+
+    public String getToken(){
+        return this.token;
+    }
+
+    public void setRequest(String request){
+        this.request = request;
+    }
+
+    public void setUrl(String url){
+        this.url = url;
+    }
+
+    public void setToken(String token){
+        this.token = token;
     }
 }

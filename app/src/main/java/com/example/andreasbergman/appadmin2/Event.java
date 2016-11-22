@@ -95,6 +95,11 @@ public class Event implements Serializable {
         this.date = date;
     }
 
+    @Override
+    public String toString(){
+        return name + " Description: " + description + " Number of participants: " + participants + " Date " + date;
+    }
+
     public ArrayList<Event> listUtEventer (){
 
         String urlEvents = "http://10.22.160.172:8443/events";
