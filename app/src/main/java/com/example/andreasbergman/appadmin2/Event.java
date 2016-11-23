@@ -14,8 +14,12 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by andreasbergman on 20/10/16.
@@ -29,6 +33,7 @@ public class Event implements Serializable {
     private int dinnerParticipants;
     private static int eventId = 0;
     private String date;
+    private java.sql.Date sqlDate;
 
     private ArrayList<Event> events = new ArrayList<Event>();
 
@@ -49,6 +54,19 @@ public class Event implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public void convertDate(String d) throws ParseException {
+
+        sqlDate = java.sql.Date.valueOf(d);
+
+        //Date date1 = new java.util.Date(sqlDate.getTime());
+        // wherever you get this
+        //DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
+        //String newDate = date2.toString();
+        //setDate(newDate);
+// Print what date is today!
+
     }
 
     public void setName(String name) {
@@ -95,89 +113,10 @@ public class Event implements Serializable {
         this.date = date;
     }
 
+    // + " Description: " + description + " Number of participants: " + participants + " Date " + date
+
     @Override
     public String toString(){
-        return name + " Description: " + description + " Number of participants: " + participants + " Date " + date;
-    }
-
-    public ArrayList<Event> listUtEventer (){
-
-        String urlEvents = "http://10.22.160.172:8443/events";
-        new JSONTask().execute(urlEvents);
-        int i = 0;
-        return events;
-    }
-
-    public class JSONTask extends AsyncTask<String, String, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            HttpURLConnection connection = null;
-            BufferedReader bufferedReader = null;
-            String finalJSON = "";
-            try{
-                URL url = new URL(urls[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-                InputStream stream = connection.getInputStream();
-                bufferedReader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuffer buffer = new StringBuffer();
-
-                String line = "";
-                while ((line = bufferedReader.readLine()) != null){
-                    buffer.append(line);
-
-                }
-                String finalJSONString = buffer.toString();
-                finalJSON = finalJSONString;
-                JSONArray pArray = new JSONArray(finalJSONString);
-
-
-                return finalJSONString;
-
-            }catch (MalformedURLException e){
-
-            }catch (IOException e){
-                e.printStackTrace();
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } finally {
-                if(connection != null){
-                    connection.disconnect();
-                }
-
-                try {
-                    if (bufferedReader != null){
-                        bufferedReader.close();
-                    }
-                } catch (IOException e) {
-
-                }
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            try {
-                JSONArray pArray = new JSONArray(s);
-
-                int x = 0;
-                for(int i = 0; i < pArray.length(); i++){
-                    JSONObject e = null;
-
-                    e = pArray.getJSONObject(i);
-                    events.add(new Event(e.getString("name"),e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+        return date + " " + name ;
     }
 }

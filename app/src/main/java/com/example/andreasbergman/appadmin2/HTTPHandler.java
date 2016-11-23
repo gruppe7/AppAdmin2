@@ -246,10 +246,12 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
             String line = "";
             while ((line = bufferedReader.readLine()) != null) {
                 buffer.append(line);
-
             }
-            String finalJSONString = buffer.toString();
-            JSONObject jObj = new JSONObject(finalJSONString);
+
+            JSONArray array = new JSONArray(buffer.toString());
+            JSONObject temp = new JSONObject();
+            temp.put("events",array);
+            jObj = temp;
 
         } catch (IOException e) {
             e.printStackTrace();

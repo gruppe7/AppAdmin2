@@ -8,11 +8,14 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_incorrect_password">Username or password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="urlEvents">http://10.22.160.172:8443/events</string>
+    <string name="urlLogin">http://10.22.160.172:8443/users</string>
+
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string-array name="event">

@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
          //mToken = ((HTTPToken) getApplicationContext());
 
         jsonObjectLogin = new JSONObject();
-        URL = "http://10.22.160.172:8443/users";
+        URL = "http://192.168.1.9:8443/users";
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);

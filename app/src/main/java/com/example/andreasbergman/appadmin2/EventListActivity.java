@@ -1,5 +1,6 @@
 package com.example.andreasbergman.appadmin2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,22 +31,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+
+import static com.example.andreasbergman.appadmin2.R.id.listview1;
 
 public class EventListActivity extends AppCompatActivity implements AsyncResponse{
 
+    private ArrayAdapter<Event> eventArrayAdapter;
+
+    private ListEventTask mListTask = null;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    private ListView eventlist;
+    private ListView listView;
     private Event[] events;//test list
     NavigationView navigationView;
     /**
@@ -78,50 +78,35 @@ public class EventListActivity extends AppCompatActivity implements AsyncRespons
 
 
     //Elisabeth tester
-    public class EventAdapter extends ArrayAdapter<Event>{
-        public EventAdapter(Context context, ArrayList<Event> events){
-            super(context, 0, events);
-        }
-        @Override
-        public View getView(int position, View conertView, ViewGroup parent){
-            Event event = getItem(position);
-            if(conertView == null){
-                conertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_event_list, parent, false);
-            }
-            //ListView e = (ListView)conertView.findViewById(R.id.listview1);
-            //e.setTextAlignment(event.name);
-            TextView test = (TextView)conertView.findViewById(R.id.textView);
-            test.setText(event.getName());
-            return conertView;
-        }
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
-        String urlEvents = "http://10.22.160.172:8443/events";
-        HttpHandler = new HTTPHandler("GET", urlEvents,null);
+        String urlEvents = "http://192.168.1.9:8443/events";
+        HttpHandler = new HTTPHandler();
+        arrayOfEvents = new ArrayList<Event>();
+        eventArrayAdapter = new ArrayAdapter<Event>(this,android.R.layout.simple_list_item_1,arrayOfEvents);
 
-       // ArrayList<Event> arrayOfEvents = new ArrayList<Event>();
+        mListTask = new EventListActivity.ListEventTask(urlEvents);
+        mListTask.execute((Void)null);
 
+        listView = (ListView)findViewById(listview1);  // Get ListView object from xml
+        listView.setAdapter(eventArrayAdapter);
 
-        try {
-            HttpHandler.delegate = this;
-            allEvents = HttpHandler.execute().get();
-            //JSONArray pArray = new JSONArray(allEvents);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // Launch FriendActivity with selected friend
+                Event valgtEvent = (Event) adapterView.getItemAtPosition(i);
 
-            //for(int i = 0; i < pArray.length(); i++){
-            //    JSONObject e = null;
-            //    e = pArray.getJSONObject(i);
-            //    arrayOfEvents.add(new Event(e.getString("name"),e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
-            //}
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+                Intent intent = new Intent(EventListActivity.this, EventActivity.class);
+                intent.putExtra("event", valgtEvent);
+                startActivityForResult(intent, 10);
+            }
+        });
 
         mToolbar = (Toolbar) findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
@@ -140,30 +125,7 @@ public class EventListActivity extends AppCompatActivity implements AsyncRespons
         //making the list
         Resources resources = getResources();
 
-       // events = resources.getStringArray(R.array.event); //test list
-       // eventlist = (ListView)findViewById(listview1);  // Get ListView object from xml
-
-       // ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, events); // Define a new Adapter
-        //eventlist.setAdapter(adapter);     // Assign adapter to ListView
-        //eventlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            //EventAdapter adapter1 = new EventAdapter(this, arrayOfEvents);
-            //ListView listView =(ListView)findViewById(R.id.listview1);
-            //listView.setAdapter(adapter1);
-
-        /*    @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)  {
-                int itemPosition     = position;
-                String  itemValue    = (String) eventlist.getItemAtPosition(position);
-
-                //method to send the selected event
-                Intent intent = new Intent(EventListActivity.this, EventActivity.class);
-                startActivity(intent);
-                finish();
-
-                //Toast.makeText(getApplicationContext(), "Position :"+itemPosition+"  ListItem : " +itemValue , Toast.LENGTH_LONG).show(); //test
-
-            }
-        });*/
+        //events = resources.getStringArray(R.array.event); //test list
 
         //@andreasbergman
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -233,41 +195,69 @@ public class EventListActivity extends AppCompatActivity implements AsyncRespons
         client.disconnect();
     }
 
-    public class JSONTask extends AsyncTask<String, String, String> {
+    public class ListEventTask extends AsyncTask<Void, Void, JSONObject> {
 
-        public AsyncResponse delegate = null;
-
-        public JSONTask(AsyncResponse delegate){
-            this.delegate = delegate;
+        String URL;
+        public ListEventTask(String url){
+            URL = url;
         }
-
         @Override
-        protected String doInBackground(String... urls) {
-            HttpURLConnection connection = null;
-            BufferedReader bufferedReader = null;
-            String finalJSON = "";
+        protected JSONObject doInBackground(Void... urls) {
+            JSONObject result;
             try{
-                JSONObject jsonObject = HttpHandler.GET(urls[0]);
+                result = HttpHandler.GET(URL);
 
-                return jsonObject.toString();
+                return result;
 
-            } finally {
-                if(connection != null){
-                    connection.disconnect();
-                }
-
-                try {
-                    if (bufferedReader != null){
-                        bufferedReader.close();
-                    }
-                } catch (IOException e) {
-                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
+            return null;
         }
+
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(JSONObject result) {
             super.onPostExecute(result);
-            int i = 0;
+
+            if (result == null){
+                String t = "";
+            }
+            int x = 0;
+            try {
+                JSONArray eventer = result.getJSONArray("events");
+
+                for (int i = 0; i < eventer.length(); i++) {
+                    JSONObject e = null;
+                    e = eventer.getJSONObject(i);
+                    arrayOfEvents.add(new Event(e.getString("name"), e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
+                }
+
+                //listView = (ListView)findViewById(listview1);  // Get ListView object from xml
+                //listView.setAdapter(eventArrayAdapter);     // Assign adapter to ListView
+
+                //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, events);
+                //ArrayAdapter<Event> ad = new ArrayAdapter<Event>(this, android.R.layout.simple_list_item_1,arrayOfEvents);// Define a new Adapter
+/*
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    EventAdapter adapter1 = new EventAdapter(this, arrayOfEvents);
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)  {
+                        int itemPosition     = position;
+                        String  itemValue    = (String) listView.getItemAtPosition(position);
+
+                        //method to send the selected event
+                        Intent intent = new Intent(EventListActivity.this, EventActivity.class);
+                        startActivity(intent);
+                        finish();
+
+                        //Toast.makeText(getApplicationContext(), "Position :"+itemPosition+"  ListItem : " +itemValue , Toast.LENGTH_LONG).show(); //test
+
+                    }
+                });*/
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
