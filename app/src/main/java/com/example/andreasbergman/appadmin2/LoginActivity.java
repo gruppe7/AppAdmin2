@@ -58,19 +58,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
-    private static final String POST_REQUEST = "POST";
-
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "brukernavn:passord", "elias:passord","andreas:passord"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -87,8 +74,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     JSONObject result;
     HTTPToken mToken;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
          //mToken = ((HTTPToken) getApplicationContext());
 
         jsonObjectLogin = new JSONObject();
-        URL = "http://192.168.1.9:8443/users";
+        URL = "http://10.22.160.172:8443/users";
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -236,8 +221,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
 
             httpHandler = new HTTPHandler("POST",URL, jsonObjectLogin);
-            httpHandler.delegate = this;
-
+            //httpHandler.delegate = this;
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
@@ -361,6 +345,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             int responsecode = 0;
             try {
+
                 responsecode = svar.getInt("responseCode");
 
                 if(responsecode == 200 || responsecode == 201){
@@ -383,6 +368,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return false;
                 }
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (NullPointerException e){
                 e.printStackTrace();
             }
             // TODO: register the new account here.

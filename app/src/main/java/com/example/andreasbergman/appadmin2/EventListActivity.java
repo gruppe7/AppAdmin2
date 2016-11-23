@@ -101,12 +101,14 @@ public class EventListActivity extends AppCompatActivity implements AsyncRespons
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
-        String urlEvents = "http://192.168.1.9:8443/events";
+        String urlEvents = "http://10.22.160.172:8443/events";
         HttpHandler = new HTTPHandler("GET", urlEvents,null);
+
        // ArrayList<Event> arrayOfEvents = new ArrayList<Event>();
 
 
         try {
+            HttpHandler.delegate = this;
             allEvents = HttpHandler.execute().get();
             //JSONArray pArray = new JSONArray(allEvents);
 

@@ -117,9 +117,12 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
 
                 }
                 String finalJSONString = buffer.toString();
-
                 JSONArray array = new JSONArray(buffer.toString());
-                JSONObject temp = array.getJSONObject(0);
+
+
+                JSONObject temp = new JSONObject();
+                temp.put("Events",array);
+
                 jObj = temp;
 
                 return jObj;
