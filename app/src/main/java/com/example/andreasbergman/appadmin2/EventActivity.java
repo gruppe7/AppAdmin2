@@ -35,9 +35,7 @@ public class EventActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EventActivity.this, EventListActivity.class);
-                // HER MÅ VI FIKSE SLIK AT EVENTLISTACTIVITY ER OPPDATER NÅR MAN GÅR TILBAKE
-                startActivity(intent);
+
                 finish();
             }
         });
