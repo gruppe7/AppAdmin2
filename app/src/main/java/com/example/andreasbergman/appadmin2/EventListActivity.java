@@ -1,7 +1,5 @@
 package com.example.andreasbergman.appadmin2;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -13,14 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -31,21 +26,35 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 
 import static com.example.andreasbergman.appadmin2.R.id.listview1;
 
-public class EventListActivity extends AppCompatActivity implements AsyncResponse{
+class RestAPIEvent{
+    HTTPHandler httpHandler = new HTTPHandler();
+    String urlEvents = "http://192.168.1.9:8443/events";
+
+    /**
+     * getEventList
+     * @return return an array of events from DB
+     */
+    public JSONObject getEventList() throws JSONException {
+        JSONArray returnArray = httpHandler.httpGET(urlEvents);
+
+        JSONObject temp = new JSONObject();
+        temp.put("events",returnArray);
+
+        return temp;
+    }
+}
+public class EventListActivity extends AppCompatActivity{
 
     private ArrayAdapter<Event> eventArrayAdapter;
-
     private ListEventTask mListTask = null;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
     private ListView listView;
-    private Event[] events;//test list
     NavigationView navigationView;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -57,40 +66,15 @@ public class EventListActivity extends AppCompatActivity implements AsyncRespons
     ArrayList<Event> arrayOfEvents;
 
     @Override
-    public void processFinish(JSONObject output) throws JSONException {
-        arrayOfEvents = new ArrayList<Event>();
-
-
-        try {
-            JSONArray pArray = new JSONArray(allEvents);
-
-            int x = 0;
-            for(int i = 0; i < pArray.length(); i++){
-                JSONObject e = null;
-                e = pArray.getJSONObject(i);
-                arrayOfEvents.add(new Event(e.getString("name"),e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    //Elisabeth tester
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
-        String urlEvents = "http://192.168.1.9:8443/events";
         HttpHandler = new HTTPHandler();
         arrayOfEvents = new ArrayList<Event>();
         eventArrayAdapter = new ArrayAdapter<Event>(this,android.R.layout.simple_list_item_1,arrayOfEvents);
 
-        mListTask = new EventListActivity.ListEventTask(urlEvents);
+        mListTask = new EventListActivity.ListEventTask();
         mListTask.execute((Void)null);
 
         listView = (ListView)findViewById(listview1);  // Get ListView object from xml
@@ -122,12 +106,10 @@ public class EventListActivity extends AppCompatActivity implements AsyncRespons
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        //making the list
+        //Creating resourcelist
         Resources resources = getResources();
 
-        //events = resources.getStringArray(R.array.event); //test list
 
-        //@andreasbergman
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -198,14 +180,16 @@ public class EventListActivity extends AppCompatActivity implements AsyncRespons
     public class ListEventTask extends AsyncTask<Void, Void, JSONObject> {
 
         String URL;
-        public ListEventTask(String url){
-            URL = url;
+        RestAPIEvent restAPIEvent;
+        public ListEventTask(){
+            restAPIEvent = new RestAPIEvent();
         }
+
         @Override
         protected JSONObject doInBackground(Void... urls) {
             JSONObject result;
             try{
-                result = HttpHandler.GET(URL);
+                result = restAPIEvent.getEventList();
 
                 return result;
 
@@ -232,11 +216,6 @@ public class EventListActivity extends AppCompatActivity implements AsyncRespons
                     arrayOfEvents.add(new Event(e.getString("name"), e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
                 }
 
-                //listView = (ListView)findViewById(listview1);  // Get ListView object from xml
-                //listView.setAdapter(eventArrayAdapter);     // Assign adapter to ListView
-
-                //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, events);
-                //ArrayAdapter<Event> ad = new ArrayAdapter<Event>(this, android.R.layout.simple_list_item_1,arrayOfEvents);// Define a new Adapter
 /*
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

@@ -3,7 +3,6 @@ package com.example.andreasbergman.appadmin2;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -21,9 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -32,9 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,15 +39,34 @@ import java.util.concurrent.ExecutionException;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
+
+/*
+ *RestAPI component for Login service
+ *Including connection with HTTPHandler and RestAPI connections
+ @author Andreas Bergman
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, AsyncResponse {
+class RestAPILogin{
+    HTTPHandler httpHandler = new HTTPHandler();
+    String urlLogin = "http://192.168.1.9:8443/users";
 
+    public RestAPILogin(){
+    }
 
-    //1. Sende POST til DB
-    //2. Sende brukernavn og passord
+    /**
+     * logIn
+     *
+     * @param obj Takes the JSON object for POST request as param
+     * @return returns the JSON object response from RestAPI
+     */
+    public JSONObject logIn(JSONObject obj){
+       return httpHandler.httpPOST(urlLogin, obj);
+    }
+}
 
+/**
+ * A login screen that offers login via username/password.
+ */
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -65,25 +79,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private HTTPHandler httpHandler;
-    private String URL;
+
+    //Objects and variables
+    private String token;
     private JSONObject jsonObjectLogin;
-    String token;
-    boolean employee;
-    boolean eventmanager;
-    JSONObject result;
+    private boolean employee,eventmanager;
+    RestAPILogin restAPILogin;
     HTTPToken mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        restAPILogin = new RestAPILogin();
 
+        //TOKEN SOM GLOBAL VARIABEL MANGLER
          //mToken = ((HTTPToken) getApplicationContext());
 
         jsonObjectLogin = new JSONObject();
-        URL = "http://192.168.1.9:8443/users";
-
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -219,9 +232,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-
-            httpHandler = new HTTPHandler("POST",URL, jsonObjectLogin);
-            //httpHandler.delegate = this;
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
@@ -339,15 +349,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            JSONObject svar = httpHandler.postRequest(URL,jsonObjectLogin);
+            JSONObject svar = restAPILogin.logIn(jsonObjectLogin);
 
             int responsecode = 0;
             try {
 
-                responsecode = svar.getInt("responseCode");
-
+                if(svar != null){
+                    responsecode = svar.getInt("responseCode");
+                }else{
+                    return false;
+                }
                 if(responsecode == 200 || responsecode == 201){
 
                     token = svar.getString("token");
@@ -360,8 +371,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }else employee = false;
                     if (svar.getInt("eventmanager") == 1){
                         eventmanager = true;
-                    }else eventmanager = false;
 
+                    }else{
+                        eventmanager = false;
+                        return false;
+                    }
                     return true;
 
                 }else{
@@ -372,8 +386,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (NullPointerException e){
                 e.printStackTrace();
             }
-            // TODO: register the new account here.
-
             return false;
         }
 
@@ -381,7 +393,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
             if (success) {
                 finish();
                 Intent myIntent = new Intent(LoginActivity.this, EventListActivity.class);
@@ -397,45 +408,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
-    }
-
-    public boolean verifyLogin() throws ExecutionException, InterruptedException, JSONException {
-
-        result = httpHandler.execute().get();
-
-        int responsecode = result.getInt("responseCode");
-
-        if(responsecode == 200 || responsecode == 201){
-
-           token = result.getString("token");
-
-           //Setter som global variabel
-           //mToken.setToken(token);
-
-           if(result.getInt("employee") == 1){
-               employee = true;
-           }else employee = false;
-           if (result.getInt("eventmanager") == 1){
-               eventmanager = true;
-           }else eventmanager = false;
-
-            return true;
-
-        }else{
-           return false;
-       }
-    }
-
-    @Override
-    public void processFinish(JSONObject output) throws JSONException {
-
-        JSONObject testObj = output;
-
-
-        int responsecode = output.getInt("responseCode");
-        int i = 0;
-
-        //Her henter jeg ut resultatet
     }
 }
 

@@ -23,18 +23,20 @@ import java.net.URL;
  */
 
 public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
+
+    //Connections and streams to RestAPI
     private HttpURLConnection conn;
     private DataOutputStream wr;
+
+    //Objects and variables
     private StringBuilder result;
     private URL urlObj;
     private String url;
-    private JSONObject jObj = null;
-    private JSONObject inputObj;
+    private JSONArray returnArray = null;
+    private JSONObject inputObj, jObj;
     private String request;
     private String token;
-    HTTPToken mToken;
-
-    public AsyncResponse delegate = null;
+    private HTTPToken mToken;
 
     public HTTPHandler(){
 
@@ -45,8 +47,6 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
         this.request = rq;
         this.inputObj = jsonObj;
         this.url = url;
-
-
     }
 
     @Override
@@ -64,10 +64,6 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
                 conn.setConnectTimeout(15000);
 
                 conn.connect();
-
-                //JSONObject jsonObject = new JSONObject();
-                //jsonObject.put("username", "gunnadal");
-                //jsonObject.put("password", "abc123");
 
                 wr = new DataOutputStream(conn.getOutputStream());
                 wr.writeBytes(inputObj.toString());
@@ -139,7 +135,7 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
                 conn = (HttpURLConnection) urlObj.openConnection();
 
                 conn.setDoOutput(true);
-                conn.setRequestMethod("PUT");
+                conn.setRequestMethod("httpPUT");
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
@@ -180,14 +176,17 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
 
     @Override
     protected void onPostExecute(JSONObject result) {
-        try {
-            delegate.processFinish(result);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
     }
 
-    public JSONObject postRequest(String url, JSONObject jsonObject) {
+    /**
+     * POST-request
+     *
+     * @param url  the url for http request
+     * @param jsonObject  the JSON object necessary for POST request. HTTP headers etc.
+     * @return return the JSON object from RestAPI
+     */
+    public JSONObject httpPOST(String url, JSONObject jsonObject) {
         // request method is POST
         try {
             urlObj = new URL(url);
@@ -231,7 +230,13 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
         return jObj;
     }
 
-    public JSONObject GET(String url) {
+    /**
+     * GET-request
+     *
+     * @param url  the url for http request
+     * @return return the JSON object from RestAPI with the information from the url
+     */
+    public JSONArray httpGET(String url) {
 
         try {
             urlObj = new URL(url);
@@ -247,11 +252,9 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
             while ((line = bufferedReader.readLine()) != null) {
                 buffer.append(line);
             }
+            String JSONString = buffer.toString();
 
-            JSONArray array = new JSONArray(buffer.toString());
-            JSONObject temp = new JSONObject();
-            temp.put("events",array);
-            jObj = temp;
+            returnArray = new JSONArray(JSONString);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -259,10 +262,16 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
             e.printStackTrace();
         }
 
-        return jObj;
+        return returnArray;
     }
 
-    public JSONObject PUT(String url, JSONObject jsonObject) {
+    /**
+     * PUT-request
+     *
+     * @param url  the url for http request
+     * @return return the JSON object from RestAPI with the information from the url
+     */
+    public JSONObject httpPUT(String url, JSONObject jsonObject) {
         // request method is POST
         try {
             urlObj = new URL(url);
@@ -276,10 +285,6 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
             conn.setConnectTimeout(15000);
 
             conn.connect();
-
-            //JSONObject jsonObject = new JSONObject();
-            //jsonObject.put("username", "gunnadal");
-            //jsonObject.put("password", "abc123");
 
             wr = new DataOutputStream(conn.getOutputStream());
             wr.writeBytes(jsonObject.toString());
@@ -309,6 +314,7 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
 
         return jObj;
     }
+
 
     public String getToken(){
         return this.token;
