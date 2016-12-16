@@ -42,12 +42,12 @@
         android:padding="10dp" />
 
     <TextView
-        android:id="@+id/timeTV"
+        android:id="@+id/participantsTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="19.00 - 23.00"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:text="100 participants" />
 
         <TextView
             android:id="@+id/descriptionTV"
@@ -68,18 +68,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnReg"
-            android:text="Registrer Oppmøte" />
+            android:text="Registrer Oppmøte"
+            android:onClick="OnClickRegister" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnPmeld"
-            android:text="Påmelding" />
+            android:text="Påmelding"
+            android:onClick="OnClickAttendence" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnAvmeld"
-            android:text="Avmelding" />
-        
-        
+            android:text="Avmelding"
+            android:onClick="OnClickUnregister" />
+
+
+
     </LinearLayout>
+
 </LinearLayout>

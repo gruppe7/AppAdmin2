@@ -15,9 +15,11 @@
     </string>
     <string name="urlEvents">http://10.22.160.172:8443/events</string>
     <string name="urlLogin">http://10.22.160.172:8443/users</string>
-
+    <string name="back">Back to Events</string>
+    <string name="logout">Log Out</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+
     <string-array name="event">
         <item>12.10.2016 Bedriftpresentasjon</item>
         <item>10.10.2016 Bedriftpresentasjon</item>

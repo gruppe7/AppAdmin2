@@ -25,7 +25,7 @@ import java.util.Locale;
  * Created by andreasbergman on 20/10/16.
  */
 
-public class Event implements Serializable {
+public class Event implements Serializable, Comparable<Event> {
 
     private String name;
     private String description;
@@ -33,7 +33,7 @@ public class Event implements Serializable {
     private int dinnerParticipants;
     private static int eventId = 0;
     private String date;
-    private java.sql.Date sqlDate;
+    private Date parsed;
 
     private ArrayList<Event> events = new ArrayList<Event>();
 
@@ -43,30 +43,23 @@ public class Event implements Serializable {
         attendingParticipants = new ArrayList<Participants>();
     }
 
-    public Event(String name, String description, int participants, String date, int dinnerParticipants) {
+    public Event(String name, String description, int participants, String date, int dinnerParticipants) throws ParseException {
         eventId++;
         this.name = name;
         this.description = description;
         this.participants = participants;
-        this.date = date;
+        String temp = date;
         this.dinnerParticipants = dinnerParticipants;
+
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");;
+        parsed = sdf.parse(temp);
+        String outputPattern = "dd-MM-yyyy";
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+        this.date = outputFormat.format(parsed);
     }
 
     public String getName() {
         return name;
-    }
-
-    public void convertDate(String d) throws ParseException {
-
-        sqlDate = java.sql.Date.valueOf(d);
-
-        //Date date1 = new java.util.Date(sqlDate.getTime());
-        // wherever you get this
-        //DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
-        //String newDate = date2.toString();
-        //setDate(newDate);
-// Print what date is today!
-
     }
 
     public void setName(String name) {
@@ -109,6 +102,10 @@ public class Event implements Serializable {
         return date;
     }
 
+    public Date getDateObj(){
+        return parsed;
+    }
+
     public void setDate(String date) {
         this.date = date;
     }
@@ -118,5 +115,10 @@ public class Event implements Serializable {
     @Override
     public String toString(){
         return date + " " + name ;
+    }
+
+    @Override
+    public int compareTo(Event o) {
+        return getDateObj().compareTo(o.getDateObj());
     }
 }

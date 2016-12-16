@@ -18,13 +18,13 @@
         <include layout="@layout/navigation_action" android:layout_width="match_parent" android:layout_height="wrap_content" />
 
         <TextView
-            android:text="Aktive Eventer"
+            android:text="Eventer"
             android:layout_width="match_parent"
             android:layout_height="67dp"
             android:id="@+id/textView2"
-            android:textAlignment="center"
             android:layout_gravity="center"
-            android:textSize="24dp"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:fontFamily="sans-serif-condensed" />
         <ListView
             android:layout_width="match_parent"
             android:layout_height="238dp"

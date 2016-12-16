@@ -47,7 +47,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 class RestAPILogin{
     HTTPHandler httpHandler = new HTTPHandler();
-    String urlLogin = "http://192.168.1.9:8443/users";
+    String urlLogin = "http://192.168.1.7:8443/users";
 
     public RestAPILogin(){
     }
@@ -83,7 +83,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     //Objects and variables
     private String token;
     private JSONObject jsonObjectLogin;
-    private boolean employee,eventmanager;
+    private boolean employee = false;
+    private boolean eventmanager = false;
     RestAPILogin restAPILogin;
     HTTPToken mToken;
 
@@ -92,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         restAPILogin = new RestAPILogin();
-
+        mToken = new HTTPToken();
         //TOKEN SOM GLOBAL VARIABEL MANGLER
          //mToken = ((HTTPToken) getApplicationContext());
 
@@ -198,6 +199,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        mToken.setUsername(email);
 
         //Creating JSON file for HTTP Request
         jsonObjectLogin.put("username",email);
@@ -232,7 +234,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask();
             mAuthTask.execute((Void) null);
         }
     }
@@ -339,14 +341,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
         @Override
         protected Boolean doInBackground(Void... params) {
             JSONObject svar = restAPILogin.logIn(jsonObjectLogin);
@@ -364,20 +358,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     token = svar.getString("token");
 
                     //Setter som global variabel
-                    //mToken.setToken(token);
-
-                    if(svar.getInt("employee") == 1){
-                        employee = true;
-                    }else employee = false;
-                    if (svar.getInt("eventmanager") == 1){
-                        eventmanager = true;
-
-                    }else{
-                        eventmanager = false;
-                        return false;
-                    }
+                    if(token != null) mToken.setToken(token);
+                    if(svar.getInt("employee") == 1) employee = true;
+                    if (svar.getInt("eventmanager") == 1) eventmanager = true;
                     return true;
-
                 }else{
                     return false;
                 }
@@ -396,6 +380,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 finish();
                 Intent myIntent = new Intent(LoginActivity.this, EventListActivity.class);
+                myIntent.putExtra("token", mToken);
                 LoginActivity.this.startActivity(myIntent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

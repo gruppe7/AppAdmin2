@@ -43,12 +43,6 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
     }
 
 
-    public HTTPHandler(String rq, String url, JSONObject jsonObj){
-        this.request = rq;
-        this.inputObj = jsonObj;
-        this.url = url;
-    }
-
     @Override
     protected JSONObject doInBackground(Void... params) {
         if(request.equals("POST")){
@@ -318,14 +312,6 @@ public class HTTPHandler extends AsyncTask<Void, String, JSONObject>{
 
     public String getToken(){
         return this.token;
-    }
-
-    public void setRequest(String request){
-        this.request = request;
-    }
-
-    public void setUrl(String url){
-        this.url = url;
     }
 
     public void setToken(String token){
