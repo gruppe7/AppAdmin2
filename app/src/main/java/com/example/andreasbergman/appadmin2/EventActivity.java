@@ -1,6 +1,7 @@
 package com.example.andreasbergman.appadmin2;
 
 import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -13,7 +14,7 @@ import org.json.JSONObject;
 
 class RestAPIEvent{
     HTTPHandler httpHandler = new HTTPHandler();
-    String urlEvents = "http://192.168.1.7:8443/events";
+    String urlEvents = "http://10.0.0.95:8443/events";
 
     public void register(JSONObject obj){
         JSONObject response = httpHandler.httpPOST(urlEvents,obj);
@@ -30,6 +31,9 @@ class RestAPIEvent{
     }
 }
 public class EventActivity extends AppCompatActivity {
+    private NfcAdapter nfcAdapter;
+    TextView textViewInfo;
+
 
     Event event;
     HTTPToken mToken;
@@ -38,6 +42,16 @@ public class EventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+      //  textViewInfo = (TextView)findViewById(R.id.nfcInfo);
+
+        if(nfcAdapter == null){
+            Toast.makeText(this, "NFC NOT supported on this devices!", Toast.LENGTH_LONG).show();
+            finish();
+        }else if(!nfcAdapter.isEnabled()){Toast.makeText(this, "NFC NOT Enabled!", Toast.LENGTH_LONG).show();
+            finish();
+        }
 
         restAPIEvent = new RestAPIEvent();
 
@@ -71,18 +85,23 @@ public class EventActivity extends AppCompatActivity {
     }
 
     public void OnClickRegister(View view){
-        JSONObject registerObj = new JSONObject();
-        restAPIEvent.register(registerObj);
+        Intent intent = new Intent(EventActivity.this, NfcRead.class);
+        // JSONObject registerObj = new JSONObject();
+       // restAPIEvent.register(registerObj);
     }
 
     public void OnClickAttendence(View view){
-        JSONObject attendeceObj = new JSONObject();
-        restAPIEvent.attendence(attendeceObj);
+        Intent intent = new Intent(EventActivity.this, NfcRead.class);
+
+      //  JSONObject attendeceObj = new JSONObject();
+        //restAPIEvent.attendence(attendeceObj);
     }
 
     public void OnClickUnregister(View view){
-        JSONObject unregisterObj = new JSONObject();
-        restAPIEvent.unregister(unregisterObj);
+        Intent intent = new Intent(EventActivity.this, NfcRead.class);
+
+       // JSONObject unregisterObj = new JSONObject();
+      //  restAPIEvent.unregister(unregisterObj);
     }
 
     @Override
@@ -101,4 +120,46 @@ public class EventActivity extends AppCompatActivity {
         }else if(item.getTitle() == getString(R.string.close)) finishAffinity();
         return true;
     }
+   /* @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
+            Toast.makeText(this, "onResume() - ACTION_TAG_DISCOVERED", Toast.LENGTH_SHORT).show();
+
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            if(tag == null){
+                textViewInfo.setText("tag == null");
+            }else{
+                String tagInfo = tag.toString() + "\n";
+
+                tagInfo += "\nTag Id: \n";
+                byte[] tagId = tag.getId();
+                tagInfo += "length = " + tagId.length +"\n";
+                for(int i =tagId.length-1; i >= 0; i--){
+                    tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
+
+                    // tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
+
+                }
+                tagInfo += "\n";
+
+                String[] techList = tag.getTechList();
+                tagInfo += "\nTech List\n";
+                tagInfo += "length = " + techList.length +"\n";
+                for(int i= 0; i<techList.length;  i++){
+                    tagInfo += techList[i] + "\n ";
+                }
+
+                textViewInfo.setText(tagInfo);
+            }
+        }else{
+            Toast.makeText(this, "onResume() : " + action, Toast.LENGTH_SHORT).show();
+        }
+
+
+    }*/
 }
