@@ -29,8 +29,9 @@ public class NfcRead extends Activity{
             Toast.makeText(this, "NFC NOT supported on this devices!", Toast.LENGTH_LONG).show();
             finish();
         }else if(!nfcAdapter.isEnabled()){Toast.makeText(this, "NFC NOT Enabled!", Toast.LENGTH_LONG).show();
-            finish();
+           // finish();
         }
+
     }
     @Override
     protected void onResume() {
@@ -53,7 +54,7 @@ public class NfcRead extends Activity{
                 byte[] tagId = tag.getId();
               // tagInfo += "length = " + tagId.length +"\n";
                 for(int i =tagId.length-1; i >= 0; i--){
-                    tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
+                    tagInfo += Integer.toHexString(tagId[i] & 0xFF);
 
                 }
                // tagInfo += "\n";
@@ -65,12 +66,17 @@ public class NfcRead extends Activity{
                   //  tagInfo += techList[i] + "\n ";
                 //}
 
-                textViewInfo.setText(tagInfo);
-                String a = textViewInfo.getText().toString();
-
-                Toast.makeText(this, a, Toast.LENGTH_SHORT).show();
+               // textViewInfo.setText(tagInfo);
+              //  String a = textViewInfo.getText().toString();
 
 
+
+
+                Long i = Long.parseLong(tagInfo,16);
+
+                textViewInfo.setText(i +"");
+                String b = textViewInfo.getText().toString();
+               Toast.makeText(this, b, Toast.LENGTH_LONG).show();
 
 
             }
@@ -80,4 +86,6 @@ public class NfcRead extends Activity{
 
         intent = new Intent(NfcRead.this, EventActivity.class);
     }
+
+
 }
