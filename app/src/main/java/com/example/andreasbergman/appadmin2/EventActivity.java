@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 class RestAPIEvent{
     HTTPHandler httpHandler = new HTTPHandler();
-    String urlEvents = "http://10.0.0.95:8443/events";
+    String urlEvents = "http://10.22.160.227:8443/events";
 
     public void register(JSONObject obj){
         JSONObject response = httpHandler.httpPOST(urlEvents,obj);
@@ -44,14 +44,9 @@ public class EventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-      //  textViewInfo = (TextView)findViewById(R.id.nfcInfo);
+        //textViewInfo = (TextView)findViewById(R.id.nfcInfo);
 
-        if(nfcAdapter == null){
-            Toast.makeText(this, "NFC NOT supported on this devices!", Toast.LENGTH_LONG).show();
-            finish();
-        }else if(!nfcAdapter.isEnabled()){Toast.makeText(this, "NFC NOT Enabled!", Toast.LENGTH_LONG).show();
-            finish();
-        }
+
 
         restAPIEvent = new RestAPIEvent();
 
@@ -73,12 +68,16 @@ public class EventActivity extends AppCompatActivity {
         part.setText("Participants: " + event.getParticipants());
         desc.setText(event.getDescription());
 
+        if(nfcAdapter == null){
+            Toast.makeText(this, "NFC NOT supported on this devices!", Toast.LENGTH_LONG).show();
+            //finish();
+        }else if(!nfcAdapter.isEnabled()){Toast.makeText(this, "NFC NOT Enabled!", Toast.LENGTH_LONG).show();
+            //finish();
+        }
+
         back.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View v) {
-
                 finish();
             }
         });
@@ -86,22 +85,22 @@ public class EventActivity extends AppCompatActivity {
 
     public void OnClickRegister(View view){
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
-        // JSONObject registerObj = new JSONObject();
-       // restAPIEvent.register(registerObj);
+        //JSONObject registerObj = new JSONObject();
+        //restAPIEvent.register(registerObj);
     }
 
     public void OnClickAttendence(View view){
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
 
-      //  JSONObject attendeceObj = new JSONObject();
+        //JSONObject attendeceObj = new JSONObject();
         //restAPIEvent.attendence(attendeceObj);
     }
 
     public void OnClickUnregister(View view){
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
 
-       // JSONObject unregisterObj = new JSONObject();
-      //  restAPIEvent.unregister(unregisterObj);
+        //JSONObject unregisterObj = new JSONObject();
+        //restAPIEvent.unregister(unregisterObj);
     }
 
     @Override

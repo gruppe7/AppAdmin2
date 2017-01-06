@@ -48,7 +48,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 class RestAPILogin{
     HTTPHandler httpHandler = new HTTPHandler();
 
-    String urlLogin = "http://10.0.0.95:8443/users";
+    String urlLogin = "http://10.22.160.227:8443/users";
 
     public RestAPILogin(){
     }
