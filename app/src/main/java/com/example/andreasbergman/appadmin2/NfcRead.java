@@ -69,22 +69,24 @@ public class NfcRead extends Activity{
                // textViewInfo.setText(tagInfo);
               //  String a = textViewInfo.getText().toString();
 
+                //the M number from the student card
+                Long  mNumber = Long.parseLong(tagInfo,16);
 
+                textViewInfo.setText(mNumber +"");
+             //   String b = textViewInfo.getText().toString();
+               //Toast.makeText(this, b, Toast.LENGTH_LONG).show();
 
-
-                Long i = Long.parseLong(tagInfo,16);
-
-                textViewInfo.setText(i +"");
-                String b = textViewInfo.getText().toString();
-               Toast.makeText(this, b, Toast.LENGTH_LONG).show();
-
+               Intent intentNfc = new Intent(NfcRead.this, EventActivity.class);
+                intentNfc.putExtra( "data", mNumber);
+                startActivity(intentNfc);
 
             }
         }else{
             Toast.makeText(this, "onResume() : " + action, Toast.LENGTH_SHORT).show();
         }
 
-        intent = new Intent(NfcRead.this, EventActivity.class);
+
+
     }
 
 

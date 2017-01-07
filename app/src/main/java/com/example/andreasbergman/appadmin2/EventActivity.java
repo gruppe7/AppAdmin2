@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 class RestAPIEvent{
     HTTPHandler httpHandler = new HTTPHandler();
-    String urlEvents = "http://10.22.160.227:8443/events";
+    String urlEvents = "http://10.0.0.95:8443/events";
 
     public void register(JSONObject obj){
         JSONObject response = httpHandler.httpPOST(urlEvents,obj);
@@ -85,6 +85,15 @@ public class EventActivity extends AppCompatActivity {
 
     public void OnClickRegister(View view){
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
+
+
+        //tror det er noe feil her, mulig det må ligge en annen plass?
+        
+        Intent intentNfc = getIntent();
+      //  getIntent().getLongExtra("data", 0);
+        Long mNumber=getIntent().getLongExtra("data", 0);
+        Toast.makeText(this, mNumber +"", Toast.LENGTH_LONG).show();
+
         //JSONObject registerObj = new JSONObject();
         //restAPIEvent.register(registerObj);
     }
