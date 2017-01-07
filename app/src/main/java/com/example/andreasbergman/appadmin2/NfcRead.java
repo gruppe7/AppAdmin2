@@ -77,7 +77,7 @@ public class NfcRead extends Activity{
                //Toast.makeText(this, b, Toast.LENGTH_LONG).show();
 
                Intent intentNfc = new Intent(NfcRead.this, EventActivity.class);
-                intentNfc.putExtra( "data", mNumber);
+                intentNfc.putExtra( "number", mNumber);
                 startActivity(intentNfc);
 
             }

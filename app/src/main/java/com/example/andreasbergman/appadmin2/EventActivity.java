@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 class RestAPIEvent{
@@ -37,6 +38,7 @@ public class EventActivity extends AppCompatActivity {
 
     Event event;
     HTTPToken mToken;
+    Long mNumber;
     RestAPIEvent restAPIEvent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,9 @@ public class EventActivity extends AppCompatActivity {
         if(intent.hasExtra("event")) event = (Event) intent.getExtras().getSerializable("event");
         else event = new Event();
 
-        if(intent.hasExtra("token"))
+        if(intent.hasExtra("token"))mToken = (HTTPToken) intent.getExtras().getSerializable("token");
+        if(intent.hasExtra("number")) mNumber = (Long) intent.getExtras().getSerializable("number");
+
 
         name.setText(event.getName());
         date.setText(event.getDateObj().toString());
@@ -83,10 +87,9 @@ public class EventActivity extends AppCompatActivity {
         });
     }
 
-    public void OnClickRegister(View view){
+    public void OnClickRegister(View view) throws JSONException {
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
-
-
+        
         //tror det er noe feil her, mulig det må ligge en annen plass?
         
         Intent intentNfc = getIntent();
@@ -96,20 +99,30 @@ public class EventActivity extends AppCompatActivity {
 
         //JSONObject registerObj = new JSONObject();
         //restAPIEvent.register(registerObj);
+
+        JSONObject registerObj = new JSONObject();
+        registerObj.put("eventId", event.getEventId());
+        registerObj.put("token",mToken.getToken());
+        restAPIEvent.register(registerObj);
+
     }
 
-    public void OnClickAttendence(View view){
+    public void OnClickAttendence(View view) throws JSONException {
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
+        JSONObject attendeceObj = new JSONObject();
+        attendeceObj.put("eventId", event.getEventId());
+        attendeceObj.put("token",mToken.getToken());
+        restAPIEvent.attendence(attendeceObj);
 
-        //JSONObject attendeceObj = new JSONObject();
-        //restAPIEvent.attendence(attendeceObj);
+
     }
 
-    public void OnClickUnregister(View view){
+    public void OnClickUnregister(View view) throws JSONException {
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
-
-        //JSONObject unregisterObj = new JSONObject();
-        //restAPIEvent.unregister(unregisterObj);
+        JSONObject unregisterObj = new JSONObject();
+        unregisterObj.put("eventId", event.getEventId());
+        unregisterObj.put("token",mToken.getToken());
+        restAPIEvent.unregister(unregisterObj);
     }
 
     @Override

@@ -31,7 +31,7 @@ public class Event implements Serializable, Comparable<Event> {
     private String description;
     private int participants;
     private int dinnerParticipants;
-    private static int eventId = 0;
+    private int eventId;
     private String date;
     private Date parsed;
 
@@ -43,8 +43,8 @@ public class Event implements Serializable, Comparable<Event> {
         attendingParticipants = new ArrayList<Participants>();
     }
 
-    public Event(String name, String description, int participants, String date, int dinnerParticipants) throws ParseException {
-        eventId++;
+    public Event(int eventId,String name, String description, int participants, String date, int dinnerParticipants) throws ParseException {
+        this.eventId = eventId;
         this.name = name;
         this.description = description;
         this.participants = participants;

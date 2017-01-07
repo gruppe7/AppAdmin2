@@ -225,7 +225,7 @@ public class EventListActivity extends AppCompatActivity{
                 for (int i = 0; i < eventer.length(); i++) {
                     JSONObject e = null;
                     e = eventer.getJSONObject(i);
-                    arrayOfEvents.add(new Event(e.getString("name"), e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
+                    arrayOfEvents.add(new Event(e.getInt("eventId"),e.getString("name"), e.getString("description"), e.getInt("participants"), e.getString("date"), e.getInt("dinnerParticipants")));
                 }
                 Collections.sort(arrayOfEvents);
 
