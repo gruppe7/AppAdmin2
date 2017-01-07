@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
+
 /**
  * Created by elisabethstorset on 20.12.2016.
  */
 
-public class NfcRead extends Activity{
+public class NfcRead extends Activity implements Serializable {
     private NfcAdapter nfcAdapter;
     TextView textViewInfo;
 

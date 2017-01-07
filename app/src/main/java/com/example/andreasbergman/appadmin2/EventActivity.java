@@ -16,19 +16,26 @@ import org.json.JSONObject;
 class RestAPIEvent{
     HTTPHandler httpHandler = new HTTPHandler();
     String urlEvents = "http://10.0.0.95:8443/events";
+    String urlLoggedIn = "http://10.0.0.95:8443/event/:eventId/joinEventLoggedIn";
 
-    public void register(JSONObject obj){
-        JSONObject response = httpHandler.httpPOST(urlEvents,obj);
+
+    public JSONObject register(JSONObject obj){
+        JSONObject response = httpHandler.httpPOST(urlLoggedIn,obj);
+        if(response != null){
+            //Toast.makeText(this, "Success", Toast.LENGTH_LONG).show();
+        }
+
+        return response;
     }
 
-    public void attendence(JSONObject obj){
-        JSONObject response = httpHandler.httpPOST(urlEvents,obj);
-
+    public JSONObject attendence(JSONObject obj){
+        JSONObject response = httpHandler.httpPOST(urlLoggedIn,obj);
+        return response;
     }
 
-    public void unregister(JSONObject obj) {
-        JSONObject response = httpHandler.httpPOST(urlEvents,obj);
-
+    public JSONObject unregister(JSONObject obj) {
+        JSONObject response = httpHandler.httpPOST(urlLoggedIn,obj);
+        return response;
     }
 }
 public class EventActivity extends AppCompatActivity {
@@ -48,8 +55,6 @@ public class EventActivity extends AppCompatActivity {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         //textViewInfo = (TextView)findViewById(R.id.nfcInfo);
 
-
-
         restAPIEvent = new RestAPIEvent();
 
         TextView name = (TextView)findViewById(R.id.eventNameTV);
@@ -62,9 +67,10 @@ public class EventActivity extends AppCompatActivity {
 
         if(intent.hasExtra("event")) event = (Event) intent.getExtras().getSerializable("event");
         else event = new Event();
-
         if(intent.hasExtra("token"))mToken = (HTTPToken) intent.getExtras().getSerializable("token");
+        else mToken = null;
         if(intent.hasExtra("number")) mNumber = (Long) intent.getExtras().getSerializable("number");
+        else mNumber = null;
 
 
         name.setText(event.getName());
@@ -94,35 +100,45 @@ public class EventActivity extends AppCompatActivity {
         
         Intent intentNfc = getIntent();
       //  getIntent().getLongExtra("data", 0);
-        Long mNumber=getIntent().getLongExtra("data", 0);
-        Toast.makeText(this, mNumber +"", Toast.LENGTH_LONG).show();
-
-        //JSONObject registerObj = new JSONObject();
-        //restAPIEvent.register(registerObj);
+//        Toast.makeText(this, mNumber +"", Toast.LENGTH_LONG).show();
 
         JSONObject registerObj = new JSONObject();
-        registerObj.put("eventId", event.getEventId());
-        registerObj.put("token",mToken.getToken());
-        restAPIEvent.register(registerObj);
+        JSONObject response = new JSONObject();
+
+        if( mNumber != null && mToken != null){
+            registerObj.put("cardId",mNumber);
+            registerObj.put("eventId", event.getEventId());
+            registerObj.put("token",mToken.getToken());
+            response = restAPIEvent.register(registerObj);
+        }
+        Toast.makeText(this, response.toString(), Toast.LENGTH_LONG).show();
 
     }
 
     public void OnClickAttendence(View view) throws JSONException {
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
         JSONObject attendeceObj = new JSONObject();
-        attendeceObj.put("eventId", event.getEventId());
-        attendeceObj.put("token",mToken.getToken());
-        restAPIEvent.attendence(attendeceObj);
+        JSONObject response = new JSONObject();
 
+        if( mNumber != null && mToken != null){
+            attendeceObj.put("eventId", event.getEventId());
+            attendeceObj.put("token",mToken.getToken());
+            response = restAPIEvent.attendence(attendeceObj);
+        }
 
+        //HER MÅ VI FÅ TIL SLIK AT EN TOAST KOMMER OPP OM DET ER RIKTIG ELLER FEIL
     }
 
     public void OnClickUnregister(View view) throws JSONException {
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
         JSONObject unregisterObj = new JSONObject();
-        unregisterObj.put("eventId", event.getEventId());
-        unregisterObj.put("token",mToken.getToken());
-        restAPIEvent.unregister(unregisterObj);
+        JSONObject response = new JSONObject();
+        if( mNumber != null && mToken != null) {
+            unregisterObj.put("cardId", mNumber);
+            unregisterObj.put("eventId", event.getEventId());
+            unregisterObj.put("token", mToken.getToken());
+            response = restAPIEvent.unregister(unregisterObj);
+        }
     }
 
     @Override
