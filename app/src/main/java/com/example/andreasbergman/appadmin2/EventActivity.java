@@ -111,7 +111,12 @@ public class EventActivity extends AppCompatActivity {
             registerObj.put("token",mToken.getToken());
             response = restAPIEvent.register(registerObj);
         }
-        Toast.makeText(this, response.toString(), Toast.LENGTH_LONG).show();
+        int RP = 0;
+        RP = registerObj.getInt("responseCode");
+
+        if(RP == 200 || RP == 201){
+            Toast.makeText(this, "Success!", Toast.LENGTH_LONG).show();
+        }
 
     }
 
