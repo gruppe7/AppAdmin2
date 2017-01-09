@@ -32,7 +32,7 @@ import static com.example.andreasbergman.appadmin2.R.id.listview1;
 
 class RestAPIEventlist {
     HTTPHandler httpHandler = new HTTPHandler();
-    String urlEvents = "http://10.0.0.95:8443/events";
+    String urlEvents = "http://158.38.211.73:8443/events";
 
 
     /**

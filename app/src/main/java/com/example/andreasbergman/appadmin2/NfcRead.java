@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.io.Serializable;
 
 /**
- * Created by elisabethstorset on 20.12.2016.
+ * 
  */
 
 public class NfcRead extends Activity implements Serializable {
@@ -59,28 +59,15 @@ public class NfcRead extends Activity implements Serializable {
                     tagInfo += Integer.toHexString(tagId[i] & 0xFF);
 
                 }
-               // tagInfo += "\n";
 
-              //  String[] techList = tag.getTechList();
-                //tagInfo += "\nTech List\n";
-                //tagInfo += "length = " + techList.length +"\n";
-                //for(int i= 0; i<techList.length;  i++){
-                  //  tagInfo += techList[i] + "\n ";
-                //}
-
-               // textViewInfo.setText(tagInfo);
-              //  String a = textViewInfo.getText().toString();
-
-                //the M number from the student card
                 Long  mNumber = Long.parseLong(tagInfo,16);
 
                 textViewInfo.setText(mNumber +"");
-             //   String b = textViewInfo.getText().toString();
-               //Toast.makeText(this, b, Toast.LENGTH_LONG).show();
+             //  Toast.makeText(this, mNumber +"", Toast.LENGTH_LONG).show();
 
-               Intent intentNfc = new Intent(NfcRead.this, EventActivity.class);
-                intentNfc.putExtra( "number", mNumber);
-                startActivity(intentNfc);
+               intent = new Intent(NfcRead.this, EventActivity.class);
+                intent.putExtra( "number", mNumber);
+                startActivity(intent);
 
             }
         }else{

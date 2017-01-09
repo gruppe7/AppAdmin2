@@ -15,8 +15,8 @@ import org.json.JSONObject;
 
 class RestAPIEvent{
     HTTPHandler httpHandler = new HTTPHandler();
-    String urlEvents = "http://10.0.0.95:8443/events";
-    String urlLoggedIn = "http://10.0.0.95:8443/event/:eventId/joinEventLoggedIn";
+    String urlEvents = "http://158.38.211.73:8443/events";
+    String urlLoggedIn = "http://158.38.211.73:8443/event/1/joinEventLoggedIn";
 
 
     public JSONObject register(JSONObject obj){
@@ -74,7 +74,7 @@ public class EventActivity extends AppCompatActivity {
 
 
         name.setText(event.getName());
-        date.setText(event.getDateObj().toString());
+     //   date.setText(event.getDateObj().toString());
         part.setText("Participants: " + event.getParticipants());
         desc.setText(event.getDescription());
 
@@ -95,24 +95,17 @@ public class EventActivity extends AppCompatActivity {
 
     public void OnClickRegister(View view) throws JSONException {
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
-        
-        //tror det er noe feil her, mulig det må ligge en annen plass?
-        
-        Intent intentNfc = getIntent();
-      //  getIntent().getLongExtra("data", 0);
-//        Toast.makeText(this, mNumber +"", Toast.LENGTH_LONG).show();
 
         JSONObject registerObj = new JSONObject();
         JSONObject response = new JSONObject();
 
-        if( mNumber != null && mToken != null){
-            registerObj.put("cardId",mNumber);
-            registerObj.put("eventId", event.getEventId());
+            registerObj.put("username","gunnadal");
+          //  registerObj.put("eventId", event.getEventId());
             registerObj.put("token",mToken.getToken());
             response = restAPIEvent.register(registerObj);
-        }
+
         int RP = 0;
-        RP = registerObj.getInt("responseCode");
+        RP = response.getInt("responseCode");
 
         if(RP == 200 || RP == 201){
             Toast.makeText(this, "Success!", Toast.LENGTH_LONG).show();
