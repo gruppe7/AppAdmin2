@@ -64,7 +64,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:weightSum="1">
-        
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="Brukernavn"
+            android:ems="10"
+            android:id="@+id/txtUsername" />
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,8 +16,13 @@ import org.json.JSONObject;
 
 class RestAPIEvent{
     HTTPHandler httpHandler = new HTTPHandler();
+<<<<<<< Updated upstream
     String urlEvents = "http://158.38.211.73:8443/events";
     String urlLoggedIn = "http://158.38.211.73:8443/event/1/joinEventLoggedIn";
+=======
+    String urlEvents = "http://10.0.0.95:8443/events";
+    String urlLoggedIn = "http://10.0.0.95:8443/event/1/joinEventLoggedIn";
+>>>>>>> Stashed changes
 
 
     public JSONObject register(JSONObject obj){
@@ -47,6 +53,7 @@ public class EventActivity extends AppCompatActivity {
     HTTPToken mToken;
     Long mNumber;
     RestAPIEvent restAPIEvent;
+    EditText txtUsername;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +69,7 @@ public class EventActivity extends AppCompatActivity {
         TextView date = (TextView)findViewById(R.id.dateTV);
         TextView desc = (TextView)findViewById(R.id.descriptionTV);
         TextView part = (TextView)findViewById(R.id.participantsTV);
+        txtUsername = (EditText)findViewById(R.id.txtUsername);
 
         Intent intent = getIntent();
 
@@ -95,6 +103,7 @@ public class EventActivity extends AppCompatActivity {
 
     public void OnClickRegister(View view) throws JSONException {
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
+<<<<<<< Updated upstream
 
         JSONObject registerObj = new JSONObject();
         JSONObject response = new JSONObject();
@@ -103,6 +112,17 @@ public class EventActivity extends AppCompatActivity {
           //  registerObj.put("eventId", event.getEventId());
             registerObj.put("token",mToken.getToken());
             response = restAPIEvent.register(registerObj);
+=======
+        Intent intentNfc = getIntent();
+        JSONObject registerObj = new JSONObject();
+        JSONObject response = new JSONObject();
+
+        if( mToken != null){
+            //registerObj.put("username",username);
+            registerObj.put("token",mToken.getToken());
+            response = restAPIEvent.register(registerObj);
+        }
+>>>>>>> Stashed changes
 
         int RP = 0;
         RP = response.getInt("responseCode");
@@ -155,46 +175,4 @@ public class EventActivity extends AppCompatActivity {
         }else if(item.getTitle() == getString(R.string.close)) finishAffinity();
         return true;
     }
-   /* @Override
-    protected void onResume() {
-        super.onResume();
-
-        Intent intent = getIntent();
-        String action = intent.getAction();
-
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-            Toast.makeText(this, "onResume() - ACTION_TAG_DISCOVERED", Toast.LENGTH_SHORT).show();
-
-            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            if(tag == null){
-                textViewInfo.setText("tag == null");
-            }else{
-                String tagInfo = tag.toString() + "\n";
-
-                tagInfo += "\nTag Id: \n";
-                byte[] tagId = tag.getId();
-                tagInfo += "length = " + tagId.length +"\n";
-                for(int i =tagId.length-1; i >= 0; i--){
-                    tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
-
-                    // tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
-
-                }
-                tagInfo += "\n";
-
-                String[] techList = tag.getTechList();
-                tagInfo += "\nTech List\n";
-                tagInfo += "length = " + techList.length +"\n";
-                for(int i= 0; i<techList.length;  i++){
-                    tagInfo += techList[i] + "\n ";
-                }
-
-                textViewInfo.setText(tagInfo);
-            }
-        }else{
-            Toast.makeText(this, "onResume() : " + action, Toast.LENGTH_SHORT).show();
-        }
-
-
-    }*/
 }
