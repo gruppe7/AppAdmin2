@@ -16,13 +16,8 @@ import org.json.JSONObject;
 
 class RestAPIEvent{
     HTTPHandler httpHandler = new HTTPHandler();
-<<<<<<< Updated upstream
-    String urlEvents = "http://158.38.211.73:8443/events";
-    String urlLoggedIn = "http://158.38.211.73:8443/event/1/joinEventLoggedIn";
-=======
     String urlEvents = "http://10.0.0.95:8443/events";
     String urlLoggedIn = "http://10.0.0.95:8443/event/1/joinEventLoggedIn";
->>>>>>> Stashed changes
 
 
     public JSONObject register(JSONObject obj){
@@ -103,7 +98,6 @@ public class EventActivity extends AppCompatActivity {
 
     public void OnClickRegister(View view) throws JSONException {
         Intent intent = new Intent(EventActivity.this, NfcRead.class);
-<<<<<<< Updated upstream
 
         JSONObject registerObj = new JSONObject();
         JSONObject response = new JSONObject();
@@ -112,17 +106,14 @@ public class EventActivity extends AppCompatActivity {
           //  registerObj.put("eventId", event.getEventId());
             registerObj.put("token",mToken.getToken());
             response = restAPIEvent.register(registerObj);
-=======
+
         Intent intentNfc = getIntent();
-        JSONObject registerObj = new JSONObject();
-        JSONObject response = new JSONObject();
 
         if( mToken != null){
             //registerObj.put("username",username);
             registerObj.put("token",mToken.getToken());
             response = restAPIEvent.register(registerObj);
         }
->>>>>>> Stashed changes
 
         int RP = 0;
         RP = response.getInt("responseCode");
